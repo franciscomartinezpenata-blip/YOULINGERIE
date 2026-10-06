@@ -309,8 +309,18 @@
 
         <!-- Hero Section con Video de Fondo -->
         <section class="hero">
-            <!-- Video de fondo corregido con ID para móviles -->
-            <video id="heroVideo" class="hero-video" autoplay muted loop playsinline>
+            <!-- Video optimizado con atributos estrictos para celulares -->
+            <video 
+                id="heroVideo" 
+                class="hero-video" 
+                autoplay 
+                muted 
+                loop 
+                playsinline 
+                webkit-playsinline 
+                preload="auto" 
+                disablepictureinpicture
+            >
                 <source src="videovictoria.mp4" type="video/mp4">
                 Tu navegador no soporta videos HTML5.
             </video>
@@ -473,4 +483,28 @@
         </footer>
     </div>
 
-    <!-- Script para asegurar la reproducción automática del video en móviles -->
+    <!-- Script de respaldo para forzar reproducción en móviles restrictivos -->
+    <script>
+        window.addEventListener("load", function() {
+            var video = document.getElementById("heroVideo");
+            if (video) {
+                video.muted = true;
+                video.defaultMuted = true;
+                var playPromise = video.play();
+                
+                if (playPromise !== undefined) {
+                    playPromise.catch(function(error) {
+                        var triggerPlay = function() {
+                            video.play();
+                            document.removeEventListener("touchstart", triggerPlay);
+                            document.removeEventListener("click", triggerPlay);
+                        };
+                        document.addEventListener("touchstart", triggerPlay, { once: true });
+                        document.addEventListener("click", triggerPlay, { once: true });
+                    });
+                }
+            }
+        });
+    </script>
+</body>
+</html>
